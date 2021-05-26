@@ -49,12 +49,13 @@ public class M1 {
 
     public static void main(String [] args){
 
-        ArrayList<String> program = ReadProgram("Resources/Program 1.txt");
+        ArrayList<String> program = ReadProgram("Resources/Program 2.txt");
         String userInput;
 
         for (String line : program){
             if (line.contains("print")){
                 String [] d = line.split("\\s");
+
                 if (Character.isUpperCase(d[1].charAt(0)))
                     System.out.println(d[1]);
                 else printVariable(d[1]);

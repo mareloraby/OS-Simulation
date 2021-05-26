@@ -30,7 +30,7 @@ public class M1 {
 
     static void printVariable(String vname)
     {
-
+        //DO Something
         System.out.print("print what's inside the variable");
     }
 

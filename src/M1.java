@@ -16,7 +16,7 @@ public class M1 {
             while (myReader.hasNextLine()) {
                 String line = myReader.nextLine();
                 arr.add(line);
-                System.out.println(line);
+                //System.out.println(line);
             }
             myReader.close();
             return arr;
@@ -35,7 +35,9 @@ public class M1 {
     }
 
     static String userInput(){
+
         Scanner sc= new Scanner(System.in);
+        System.out.print("input: ");
         return sc.nextLine();
 
     }

@@ -1,14 +1,17 @@
 import java.io.File;  // Import the File class
 import java.io.FileNotFoundException;  // Import this class to handle errors
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Scanner; // Import the Scanner class to read text files
 
 
 
 public class M1 {
+    private static HashMap<String, Object> variables;
 
     static ArrayList<String> ReadProgram(String path){
         ArrayList<String> arr = new ArrayList<>();
+        variables = new HashMap<String,Object>(); // variables list created with each program
 
         try {
             File myObj = new File(path);

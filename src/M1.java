@@ -1,17 +1,20 @@
 import java.io.File;  // Import the File class
 import java.io.FileNotFoundException;  // Import this class to handle errors
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Scanner; // Import the Scanner class to read text files
 
 
 
 public class M1 {
-    private static HashMap<String, Object> variables;
+    private static HashMap<String, Integer> intvariables;
+    private static HashMap<String, String> Stringvariables;
+    private static String userInput;
+
 
     static ArrayList<String> ReadProgram(String path){
         ArrayList<String> arr = new ArrayList<>();
-        variables = new HashMap<String,Object>(); // variables list created with each program
 
         try {
             File myObj = new File(path);
@@ -32,7 +35,8 @@ public class M1 {
     }
 
     static void printVariable(String vname)
-    {        //System.out.print(variables.get(vname)+"");
+    {
+        //System.out.print(variables.get(vname)+"");
 
     }
 
@@ -40,16 +44,44 @@ public class M1 {
 
         Scanner sc= new Scanner(System.in);
         System.out.print("input: ");
-        return sc.nextLine();
-
+        String temp = sc.nextLine();
+        sc.close();
+        return temp;
     }
 
+    static void assign(String variable, String[] values){
+        String s = null; // String to be inserted
+        if(values.length==1){
+            if(values[0].equals("input"))  {
+                s = userInput();
 
+            }else{
+                s = values[0];
+            }
+        }else{
+            if(values[0].equals("readFile")){
+                s = readFile(values[1]);
+            }
+        }
+        if(s != null){
+            char type = 's';
+            try{
+                Integer.parseInt(values[0]);
+                type='n';
+            }catch (Exception e){
+
+            }
+            if(type=='s'){
+
+            }else{//if(type == 'n')
+
+            }
+        }
+    }
 
     public static void main(String [] args){
 
         ArrayList<String> program = ReadProgram("Resources/Program 2.txt");
-        String userInput;
 
         for (String line : program){
             if (line.contains("print")){
@@ -60,10 +92,17 @@ public class M1 {
                 else printVariable(d[1]);
 
             }
-            if (line.contains("input")){
-                userInput= userInput();
+
+            else{//code for every thing other than input and print
+                String []  lineWords= line.split("\\s");
+                switch (lineWords[0]){
+                    case "assign":
+                        assign(lineWords[1], Arrays.copyOfRange(lineWords,2,lineWords.length));
+                }
 
             }
+
+
 
         }
 

@@ -66,6 +66,18 @@ public class M1 {
         }
     }
 
+    public static void Addition(String x, String y) {
+        if (Memory.containsKey(x) && Memory.containsKey(y)) {
+            try {
+                int a = Integer.parseInt(Memory.get(x));
+                int b = Integer.parseInt(Memory.get(y));
+                Memory.put(x, (a + b) + "");
+            } catch (NumberFormatException e) {
+
+            }
+        }
+    }
+
     public static void main(String[] args) {
         Memory = new Hashtable<>();
         ArrayList<String> program = ReadProgram("Resources/Program 2.txt");

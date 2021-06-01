@@ -1,19 +1,15 @@
 import java.io.File;  // Import the File class
 import java.io.FileNotFoundException;  // Import this class to handle errors
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Scanner; // Import the Scanner class to read text files
-
+import java.lang.reflect.Member;
+import java.util.*;
 
 
 public class M1 {
-    private static HashMap<String, Integer> intvariables;
-    private static HashMap<String, String> Stringvariables;
+    static Hashtable<String, String> Memory;
     private static String userInput;
 
 
-    static ArrayList<String> ReadProgram(String path){
+    static ArrayList<String> ReadProgram(String path) {
         ArrayList<String> arr = new ArrayList<>();
 
         try {
@@ -34,84 +30,58 @@ public class M1 {
 
     }
 
-    static void printVariable(String vname)
-    {
-        //System.out.print(variables.get(vname)+"");
-
+    static void printVariable(String vname) {
+        //Check if variable exists
+        System.out.print(Memory.get(vname) + "");
     }
 
-    static String userInput(){
-
-        Scanner sc= new Scanner(System.in);
+    static String userInput() {
+        Scanner sc = new Scanner(System.in);
         System.out.print("input: ");
         String temp = sc.nextLine();
         sc.close();
         return temp;
     }
 
-    static void assign(String variable, String[] values){
+    static void assign(String variable, String[] values) {
         String s = null; // String to be inserted
-        if(values.length==1){
-            if(values[0].equals("input"))  {
+        if (values.length == 1) {
+            if (values[0].equals("input")) {
                 s = userInput();
-
-            }else{
-                s = values[0];
+            } else {
+                String c = Memory.get(values[0]);
+                if (c != null) {
+                    s = c;
+                } else {
+                    s = values[0];
+                }
             }
-        }else{
-            if(values[0].equals("readFile")){
+        } else {
+            if (values[0].equals("readFile")) {
                 s = readFile(values[1]);
             }
         }
-        if(s != null){
-            char type = 's';
-            try{
-                Integer.parseInt(values[0]);
-                type='n';
-            }catch (Exception e){
-
-            }
-            if(type=='s'){
-
-            }else{//if(type == 'n')
-
-            }
+        if (s != null) {
+            Memory.put(variable, s);
         }
     }
 
-    public static void main(String [] args){
-
+    public static void main(String[] args) {
+        Memory = new Hashtable<>();
         ArrayList<String> program = ReadProgram("Resources/Program 2.txt");
-
-        for (String line : program){
-            if (line.contains("print")){
-                String [] d = line.split("\\s");
-
+        for (String line : program) {
+            if (line.contains("print")) {
+                String[] d = line.split(" ");
                 if (Character.isUpperCase(d[1].charAt(0)))
                     System.out.println(d[1]);
                 else printVariable(d[1]);
-
-            }
-
-            else{//code for every thing other than input and print
-                String []  lineWords= line.split("\\s");
-                switch (lineWords[0]){
+            } else {//code for every thing other than input and print
+                String[] lineWords = line.split("\\s");
+                switch (lineWords[0]) {
                     case "assign":
-                        assign(lineWords[1], Arrays.copyOfRange(lineWords,2,lineWords.length));
+                        assign(lineWords[1], Arrays.copyOfRange(lineWords, 2, lineWords.length));
                 }
-
             }
-
-
-
         }
-
-
-
     }
-
-
-
-
-
 }

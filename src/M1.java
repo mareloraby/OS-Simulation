@@ -72,9 +72,9 @@ public class M1 {
         String b = readFromMemory(y);
         if (a!=null && b!=null) {
             try {
-                int m = Integer.parseInt(readFromMemory(x));
-                int n = Integer.parseInt(readFromMemory(y));
-                writeInMemory(x, (a + b) + "");
+                int m = Integer.parseInt(a);
+                int n = Integer.parseInt(b);
+                writeInMemory(x, (m + n) + "");
             } catch (NumberFormatException e) {
                 System.out.println("Cannot add Strings");
             }
@@ -98,7 +98,7 @@ public class M1 {
             myWriter.flush();
             myWriter.close();
         } catch (IOException e) {
-            System.out.println("Fie cant be created :(");
+            System.out.println("File cant be created :(");
         }
     }
 
@@ -147,7 +147,7 @@ public class M1 {
 
     public static void main(String[] args) {
         Memory = new Hashtable<>();
-        String programPath = "Resources/Program 1.txt";
+        String programPath = "Resources/Program 3.txt";
         executeProgram(programPath);
     }
 }

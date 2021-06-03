@@ -1,12 +1,9 @@
-import java.io.File;  // Import the File class
-import java.io.FileNotFoundException;  // Import this class to handle errors
-import java.lang.reflect.Member;
+import java.io.*;
 import java.util.*;
 
 
 public class M1 {
     static Hashtable<String, String> Memory;
-    private static String userInput;
 
 
     static ArrayList<String> ReadProgram(String path) {
@@ -32,15 +29,19 @@ public class M1 {
 
     static void printVariable(String vname) {
         //Check if variable exists
-        System.out.print(Memory.get(vname) + "");
+        System.out.print(readFromMemory(vname) + "");
     }
 
     static String userInput() {
-        Scanner sc = new Scanner(System.in);
+        BufferedReader br =new BufferedReader(new InputStreamReader(System.in));
         System.out.print("input: ");
-        String temp = sc.nextLine();
-        sc.close();
-        return temp;
+        try {
+            return br.readLine();
+
+        } catch (IOException e) {
+            System.out.println("Error Taking the input");
+        }
+        return null;
     }
 
     static void assign(String variable, String[] values) {
@@ -49,7 +50,7 @@ public class M1 {
             if (values[0].equals("input")) {
                 s = userInput();
             } else {
-                String c = Memory.get(values[0]);
+                String c = readFromMemory(values[0]);
                 if (c != null) {
                     s = c;
                 } else {
@@ -62,25 +63,65 @@ public class M1 {
             }
         }
         if (s != null) {
-            Memory.put(variable, s);
+            writeInMemory(variable,s);
         }
     }
 
     public static void Addition(String x, String y) {
-        if (Memory.containsKey(x) && Memory.containsKey(y)) {
+        String a = readFromMemory(x);
+        String b = readFromMemory(y);
+        if (a!=null && b!=null) {
             try {
-                int a = Integer.parseInt(Memory.get(x));
-                int b = Integer.parseInt(Memory.get(y));
-                Memory.put(x, (a + b) + "");
+                int m = Integer.parseInt(readFromMemory(x));
+                int n = Integer.parseInt(readFromMemory(y));
+                writeInMemory(x, (a + b) + "");
             } catch (NumberFormatException e) {
-
+                System.out.println("Cannot add Strings");
             }
         }
     }
+    public static String readFromMemory(String x){
+        return Memory.get(x);
+    }
+    public static void writeInMemory(String x, String y){
+        Memory.put(x, y);
+    }
 
-    public static void main(String[] args) {
-        Memory = new Hashtable<>();
-        ArrayList<String> program = ReadProgram("Resources/Program 2.txt");
+    public static void writeFile(String x, String y){
+        String z =readFromMemory(y);
+        if(z!= null){
+            y= z;
+        }
+        try{
+            FileWriter myWriter = new FileWriter("Resources/Files/"+ x+".txt");
+            myWriter.write(y);
+            myWriter.flush();
+            myWriter.close();
+        } catch (IOException e) {
+            System.out.println("Fie cant be created :(");
+        }
+    }
+
+    public static String readFile(String x){
+        File myObj = new File("Resources/Files/"+ x+".txt");
+        String z =readFromMemory(x);
+        if(z!= null){
+            x= z;
+        }
+        StringBuilder result= new StringBuilder();
+        try {
+            Scanner myReader = new Scanner(myObj);
+            while (myReader.hasNextLine()) {
+                result.append(myReader.nextLine());
+            }
+            myReader.close();
+        } catch (FileNotFoundException e) {
+            System.out.println("File "+x +" does not exist");
+        }
+        return result.toString();
+    }
+    public static void executeProgram(String programPath){
+        ArrayList<String> program = ReadProgram(programPath);
         for (String line : program) {
             if (line.contains("print")) {
                 String[] d = line.split(" ");
@@ -92,8 +133,21 @@ public class M1 {
                 switch (lineWords[0]) {
                     case "assign":
                         assign(lineWords[1], Arrays.copyOfRange(lineWords, 2, lineWords.length));
+                        break;
+                    case "add":
+                        Addition(lineWords[1],lineWords[2]);
+                        break;
+                    case "writeFile":
+                        writeFile(lineWords[1],lineWords[2]);
+                        break;
                 }
             }
         }
+    }
+
+    public static void main(String[] args) {
+        Memory = new Hashtable<>();
+        String programPath = "Resources/Program 1.txt";
+        executeProgram(programPath);
     }
 }

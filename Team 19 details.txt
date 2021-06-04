@@ -1,0 +1,14 @@
+Team No: 19 
+
+Name:Maryam Ayman ElORaby
+Task:Code parser/interpreter, the print and input instructions
+____________________________
+Name: Ahmed Ayman ElOraby
+Task:The assign instruction with all its sub cases.
+____________________________
+Name: Ahmed Amr Abdalsalam
+Task:The add, read file and write file instructions.
+____________________________
+Note:
+* To parse a program, please insert the "program x.txt" in the "Resources" directory
+* To save Files without using the code please insert the file in "Resources/Files" directory

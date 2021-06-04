@@ -18,6 +18,10 @@ public class M1 {
         if(z!= null){
             y= z;
         }
+         z =readFromMemory(x);
+        if(z!= null){
+            x= z;
+        }
         try{
             FileWriter myWriter = new FileWriter("Resources/Files/"+ x+".txt");
             myWriter.write(y);
@@ -29,11 +33,11 @@ public class M1 {
     }
 
     public static String readFile(String x){
-        File myObj = new File("Resources/Files/"+ x+".txt");
         String z =readFromMemory(x);
         if(z!= null){
             x= z;
         }
+        File myObj = new File("Resources/Files/"+ x+".txt");
         StringBuilder result= new StringBuilder();
         try {
             Scanner myReader = new Scanner(myObj);
@@ -121,8 +125,9 @@ public class M1 {
         }
     }
 
-    public static void executeProgram(String programPath){
-        ArrayList<String> program = ReadProgram(programPath);
+    public static void executeProgram(String programName){
+        programName = "Resources/"+ programName+".txt";
+        ArrayList<String> program = ReadProgram(programName);
         for (String line : program) {
             if (line.contains("print")) {
                 String[] d = line.split(" ");
@@ -147,8 +152,9 @@ public class M1 {
     }
 
     public static void main(String[] args) {
-        Memory = new Hashtable<>();
-        String programPath = "Resources/Program 3.txt";
-        executeProgram(programPath);
+     Memory = new Hashtable<>();
+
+       String programName = "Program 2";
+        executeProgram(programName);
     }
 }

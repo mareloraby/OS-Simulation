@@ -2,7 +2,7 @@ import java.io.*;
 import java.util.*;
 
 
-public class M1 {
+public class OS {
     static Hashtable<String, String> Memory;
     //System Calls:
     public static String readFromMemory(String x){
@@ -154,7 +154,7 @@ public class M1 {
     public static void main(String[] args) {
      Memory = new Hashtable<>();
 
-       String programName = "Program 2";
-        executeProgram(programName);
+    String programName = "Program 2";
+    executeProgram(programName);
     }
 }

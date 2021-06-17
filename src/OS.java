@@ -26,6 +26,11 @@ PCB:
 
 
 public class OS {
+
+    static Object [] BigMemory = new Object [1900];
+    static int PID = 0;
+
+
     static class Variable{
         String key;
         Object value;
@@ -34,9 +39,6 @@ public class OS {
             this.value=value;
         }
     }
-
-    static Object [] BigMemory = new Object [1900];
-
 
     static void assignLocs(String path)
     {
@@ -55,6 +57,7 @@ public class OS {
             BigMemory[p+1] = new Variable("Process State","Blocked");
             BigMemory[p+2] = new Variable("Program Counter",p+9);
             BigMemory[p+3] = new Variable("Memory Boundry",p+18);
+
             while (myReader.hasNextLine()) {
                 String line = myReader.nextLine();
                 int l = 0;
@@ -68,8 +71,6 @@ public class OS {
         }
     }
 
-
-
     static Hashtable<String, String> Memory;
 
     //System Calls:
@@ -80,6 +81,38 @@ public class OS {
     public static void writeInMemory(String x, String y){
         Memory.put(x, y);
     }
+
+
+    public static void writeInBigMemory(String x, Object y){
+        Variable var = new Variable(x,y);
+
+        for (int v = (PID+4); v < PID+9; v++){
+
+            if (BigMemory[v] == null){
+                BigMemory[v] = var;
+                break;
+            }
+
+            if (((Variable) BigMemory[v]).key ==var.key){
+                ((Variable) BigMemory[v]).value = var.value;
+                break;
+            }
+
+        }
+
+    }
+
+    public static Object readFromBigMemory(String x){
+
+        for (int v = (PID+4); v < PID+9; v++){
+            if (((Variable) BigMemory[v]).key ==x){
+                return ((Variable) BigMemory[v]).value;
+            }
+        }
+        return null;
+    }
+
+
 
     public static void writeFile(String x, String y){
         String z =readFromMemory(y);

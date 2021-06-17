@@ -1,9 +1,77 @@
 import java.io.*;
 import java.util.*;
 
+/* Memory:
+ ---------------------------------------------------------------------------------------
+| P1                   |    P2                | P3                                     |
+| pcb1 variables1 loc3 | pcb2 variables2 loc3 | pcb3 variables3 loc3                   |
+|  4       5       10
+ ---------------------------------------------------------------------------------------
+
+
+
+pcb size: 4
+vars size: 5
+loc size: 10
+
+size of memory : 1900 word?
+
+
+PCB:
+1. Process ID (Assume that the ID corresponds to the program number)
+2. Process State
+3. Program Counter
+4. Memory Boundaries ()
+* */
+
 
 public class OS {
+    static class Variable{
+        String key;
+        Object value;
+        public Variable(String key,Object value){
+            this.key = key;
+            this.value=value;
+        }
+    }
+
+    static Object [] BigMemory = new Object [1900];
+
+
+    static void assignLocs(String path)
+    {
+
+        try {
+            File myObj = new File(path);
+            Scanner myReader = new Scanner(myObj);
+            int p =0;
+            while(p<1900){
+                if (BigMemory[p]==null) {
+                    break;
+                }
+                p+=19;
+            }
+            BigMemory[p] = new Variable("Process ID",p);
+            BigMemory[p+1] = new Variable("Process State","Blocked");
+            BigMemory[p+2] = new Variable("Program Counter",p+9);
+            BigMemory[p+3] = new Variable("Memory Boundry",p+18);
+            while (myReader.hasNextLine()) {
+                String line = myReader.nextLine();
+                int l = 0;
+                BigMemory[p + 9 + l] = line;
+                l++;
+            }
+            myReader.close();
+        } catch (FileNotFoundException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
+    }
+
+
+
     static Hashtable<String, String> Memory;
+
     //System Calls:
     public static String readFromMemory(String x){
         return Memory.get(x);

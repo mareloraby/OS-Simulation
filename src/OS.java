@@ -65,6 +65,7 @@ public class OS {
             }
             myReader.close();
             ReadyQueue.add(p);
+
         } catch (FileNotFoundException e) {
             System.out.println("An error occurred.");
             e.printStackTrace();
@@ -251,11 +252,53 @@ public class OS {
             }
         }
     }
+    public static void executeInstruction(String instruction){
+        if (instruction.contains("print")) {
+            String[] d = instruction.split(" ");
+            if (Character.isUpperCase(d[1].charAt(0)))
+                System.out.println(d[1]);
+            else printVariable(d[1]);
+        } else {//code for every thing other than input and print
+            String[] lineWords = instruction.split("\\s");
+            switch (lineWords[0]) {
+                case "assign":
+                    assign(lineWords[1], Arrays.copyOfRange(lineWords, 2, lineWords.length));
+                    break;
+                case "add":
+                    add(lineWords[1],lineWords[2]);
+                    break;
+                case "writeFile":
+                    writeFile(lineWords[1],lineWords[2]);
+                    break;
+            }
+        }
+    }
+    public static void schedule(){
+        while(!ReadyQueue.isEmpty()){
+            int index = ReadyQueue.poll();
+            executeInstruction((String)BigMemory[(Integer.parseInt(((Variable)BigMemory[index+2]).value))]);
+            ((Variable)BigMemory[index+2]).value=(Integer.parseInt(((Variable)BigMemory[index+2]).value)+1)+"";
+            int second=(Integer.parseInt(((Variable)BigMemory[index+2]).value));
+            if(second> (Integer.parseInt(((Variable)BigMemory[index+3]).value)) || BigMemory[second]==null){
+                continue;
+            }
+            executeInstruction((String)BigMemory[(Integer.parseInt(((Variable)BigMemory[index+2]).value))]);
+            ((Variable)BigMemory[index+2]).value=(Integer.parseInt(((Variable)BigMemory[index+2]).value)+1)+"";
+            ReadyQueue.add(index);
+
+
+        }
+
+    }
 
     public static void main(String[] args) {
-     Memory = new Hashtable<>();
+     //Memory = new Hashtable<>();
+        assignLocs("Program 1");
+        assignLocs("Program 2");
+        assignLocs("Program 3");
+        schedule();
 
     String programName = "Program 2";
-    executeProgram(programName);
+   // executeProgram(programName);
     }
 }

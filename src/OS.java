@@ -195,7 +195,7 @@ public class OS {
             if (values[0].equals("input")) {
                 s = userInput();
             } else {
-                String c = readFromMemory(values[0]);
+                String c = readFromBigMemory(values[0]);
                 if (c != null) {
                     s = c;
                 } else {
@@ -208,13 +208,13 @@ public class OS {
             }
         }
         if (s != null) {
-            writeInMemory(variable,s);
+            writeInBigMemory(variable,s);
         }
     }
 
     public static void add(String x, String y) {
-        String a = readFromMemory(x);
-        String b = readFromMemory(y);
+        String a = readFromBigMemory(x);
+        String b = readFromBigMemory(y);
         if (a!=null && b!=null) {
             try {
                 int m = Integer.parseInt(a);

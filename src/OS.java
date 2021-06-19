@@ -26,14 +26,14 @@ PCB:
 
 
 public class OS {
-
+    static int I= 1;
     static Object [] BigMemory = new Object [1900];
     static int PID = 0;
     static Queue<Integer> ReadyQueue = new LinkedList<>();
     static class Variable{
         String key;
-        Object value;
-        public Variable(String key,Object value){
+        String value;
+        public Variable(String key,String value){
             this.key = key;
             this.value=value;
         }
@@ -52,18 +52,19 @@ public class OS {
                 }
                 p+=19;
             }
-            BigMemory[p] = new Variable("Process ID",p);
-            BigMemory[p+1] = new Variable("Process State","Blocked");
-            BigMemory[p+2] = new Variable("Program Counter",p+9);
-            BigMemory[p+3] = new Variable("Memory Boundry",p+18);
-
+            //PCB
+            BigMemory[p] = new Variable("Process ID",p+"");
+            BigMemory[p+1] = new Variable("Process State","Ready");
+            BigMemory[p+2] = new Variable("Program Counter",(p+9)+"");
+            BigMemory[p+3] = new Variable("Memory Boundry",(p+18)+"");
+            int l = 0;
             while (myReader.hasNextLine()) {
                 String line = myReader.nextLine();
-                int l = 0;
                 BigMemory[p + 9 + l] = line;
                 l++;
             }
             myReader.close();
+            ReadyQueue.add(p);
         } catch (FileNotFoundException e) {
             System.out.println("An error occurred.");
             e.printStackTrace();
@@ -82,7 +83,7 @@ public class OS {
     }
 
 
-    public static void writeInBigMemory(String x, Object y){
+    public static void writeInBigMemory(String x, String y){
         Variable var = new Variable(x,y);
 
         for (int v = (PID+4); v < PID+9; v++){
@@ -101,7 +102,7 @@ public class OS {
 
     }
 
-    public static Object readFromBigMemory(String x){
+    public static String readFromBigMemory(String x){
 
         for (int v = (PID+4); v < PID+9; v++){
             if (((Variable) BigMemory[v]).key ==x){
@@ -114,7 +115,7 @@ public class OS {
 
 
     public static void writeFile(String x, String y){
-        String z =readFromMemory(y);
+        String z =readFromBigMemory(y);
         if(z!= null){
             y= z;
         }
@@ -133,7 +134,7 @@ public class OS {
     }
 
     public static String readFile(String x){
-        String z =readFromMemory(x);
+        String z =readFromBigMemory(x);
         if(z!= null){
             x= z;
         }

@@ -29,8 +29,7 @@ public class OS {
 
     static Object [] BigMemory = new Object [1900];
     static int PID = 0;
-
-
+    static Queue<Integer> ReadyQueue = new LinkedList<>();
     static class Variable{
         String key;
         Object value;

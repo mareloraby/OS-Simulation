@@ -30,6 +30,8 @@ public class OS {
     static Object [] BigMemory = new Object [2000];
     static int PID = 0;
     static Queue<Integer> ReadyQueue = new LinkedList<>();
+    static HashMap<Integer,Integer> quantas=new HashMap<>();
+
     static class Variable{
         String key;
         String value;
@@ -66,6 +68,7 @@ public class OS {
 
 
             //PCB
+            quantas.put(Integer.parseInt(programName.split(" ")[1]),0);
             BigMemory[p] = new Variable("Process ID",programName.split(" ")[1]);
             BigMemory[p+1] = new Variable("Process State","Not Running");
             BigMemory[p+2] = new Variable("Program Counter",(p+10)+"");
@@ -120,9 +123,11 @@ public class OS {
     }
 
 
-    static Hashtable<String, String> Memory;
+
 
     //System Calls:
+    // M1
+    static Hashtable<String, String> Memory;
     public static String readFromMemory(String x){
         return Memory.get(x);
     }
@@ -131,7 +136,7 @@ public class OS {
         Memory.put(x, y);
     }
 
-
+    //M2
     public static void writeInBigMemory(String x, String y){
         Variable var = new Variable(x,y);
 
@@ -164,9 +169,6 @@ public class OS {
         }
         return null;
     }
-
-
-
 
 
     public static void writeFile(String x, String y){
@@ -269,7 +271,6 @@ public class OS {
     }
 
     public static void add(String x, String y) {
-        // meee System.out.println("Word being read: " + );
         String a = readFromBigMemory(x);
         String b = readFromBigMemory(y);
         if (a!=null && b!=null) {
@@ -283,7 +284,8 @@ public class OS {
         }
     }
 
-    public static void executeProgram(String programName){
+
+    public static void executeProgram(String programName){ //Milestone 1
         programName = "Resources/"+ programName+".txt";
         ArrayList<String> program = ReadProgram(programName);
         for (String line : program) {
@@ -309,7 +311,7 @@ public class OS {
         }
     }
 
-    public static void executeInstruction(String instruction) {
+    public static void executeInstruction(String instruction) { //Milestone 2
 
         if (instruction.contains("print")) {
             String[] d = instruction.split(" ");
@@ -331,9 +333,15 @@ public class OS {
             }
         }
     }
+
     public static void schedule(){
         while(!ReadyQueue.isEmpty()){
             PID = ReadyQueue.poll();
+
+
+            int quanta = quantas.get(Integer.valueOf(((Variable)BigMemory[PID]).value)) ;
+
+            quantas.replace(Integer.valueOf(((Variable)BigMemory[PID]).value), quanta,quanta+1 );
 
             System.out.println("Running Process " + ((Variable)BigMemory[PID]).value);
             // System.out.println(Arrays.toString(BigMemory));
@@ -351,7 +359,7 @@ public class OS {
             int second=(Integer.parseInt(((Variable)BigMemory[PID+2]).value));
             //if(pc> upperBoundry || Mem[pc]=null)
             if(second> (Integer.parseInt(((Variable)BigMemory[PID+4]).value)) || BigMemory[second]==null){
-                System.out.println("Process "+((Variable)BigMemory[PID]).value  +" ENDED");
+                System.out.println("Process "+((Variable)BigMemory[PID]).value  +" ENDED. It ran for " + quantas.get(Integer.valueOf(((Variable)BigMemory[PID]).value))  + " quantas");
                 System.out.println();
                 continue;
             }
@@ -364,7 +372,8 @@ public class OS {
             int next=(Integer.parseInt(((Variable)BigMemory[PID+2]).value));
             if(!(next> (Integer.parseInt(((Variable)BigMemory[PID+4]).value)) || BigMemory[next]==null)) ReadyQueue.add(PID);
             else {
-                System.out.println("Process "+((Variable)BigMemory[PID]).value  +" ENDED");
+                System.out.println("Process "+((Variable)BigMemory[PID]).value  +" ENDED. It ran for " + quantas.get(Integer.valueOf(((Variable)BigMemory[PID]).value))  + " quantas");
+
 
             }
 
@@ -378,12 +387,13 @@ public class OS {
 
     public static void main(String[] args) {
 //     //Memory = new Hashtable<>();
-//        assignLocs("Program 1");
-        assignLocs("Program 2");
-        assignLocs("Program 3");
+        assignLocs("Program 1");
+//        assignLocs("Program 2");
+//        assignLocs("Program 3");
         schedule();
 
 //    String programName = "Program 2";
    // executeProgram(programName);
+
     }
 }

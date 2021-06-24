@@ -139,6 +139,7 @@ public class OS {
         Memory.put(x, y);
     }
 
+
     //M2
     public static void writeInBigMemory(String x, String y){
         Variable var = new Variable(x,y);
@@ -389,14 +390,15 @@ public class OS {
     }
 
     public static void main(String[] args) {
-//     //Memory = new Hashtable<>();
+//      Memory = new Hashtable<>();
         assignLocs("Program 1");
 //        assignLocs("Program 2");
 //        assignLocs("Program 3");
         schedule();
 
+//    M1
 //    String programName = "Program 2";
-   // executeProgram(programName);
+//    executeProgram(programName);
 
     }
 }

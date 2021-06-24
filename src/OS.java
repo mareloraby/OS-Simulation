@@ -5,16 +5,16 @@ import java.util.*;
  ---------------------------------------------------------------------------------------
 | P1                   |    P2                | P3                                     |
 | pcb1 variables1 loc3 | pcb2 variables2 loc3 | pcb3 variables3 loc3                   |
-|  4       5       10
+|  5       5       10
  ---------------------------------------------------------------------------------------
 
 
 
-pcb size: 4
+pcb size: 5
 vars size: 5
 loc size: 10
 
-size of memory : 1900 word?
+size of memory : 2000 word?
 
 
 PCB:
@@ -27,7 +27,7 @@ PCB:
 
 public class OS {
     static int I= 1;
-    static Object [] BigMemory = new Object [1900];
+    static Object [] BigMemory = new Object [2000];
     static int PID = 0;
     static Queue<Integer> ReadyQueue = new LinkedList<>();
     static class Variable{
@@ -37,35 +37,45 @@ public class OS {
             this.key = key;
             this.value=value;
         }
+
+        @Override
+        public String toString() {
+            return "(" +
+                    "key:'" + key + '\'' +
+                    ", value:'" + value + '\'' +
+                    ')';
+        }
     }
 
-    static void assignLocs(String path)
+    static void assignLocs(String programName)
     {
 
         try {
-            File myObj = new File(path);
+            System.out.println(programName);
+            File myObj = new File("Resources/"+ programName+".txt");
             Scanner myReader = new Scanner(myObj);
             int p =0;
-            while(p<1900){
+            while(p<2000){
                 if (BigMemory[p]==null) {
                     break;
                 }
-                p+=19;
+                p+=20;
             }
             //PCB
-            BigMemory[p] = new Variable("Process ID",p+"");
-            BigMemory[p+1] = new Variable("Process State","Ready");
-            BigMemory[p+2] = new Variable("Program Counter",(p+9)+"");
-            BigMemory[p+3] = new Variable("Memory Boundry",(p+18)+"");
+            BigMemory[p] = new Variable("Process ID",programName.split(" ")[1]);
+            BigMemory[p+1] = new Variable("Process State","Not Running");
+            BigMemory[p+2] = new Variable("Program Counter",(p+10)+"");
+            BigMemory[p+3] = new Variable("Memory Upper Boundary",p+"");
+            BigMemory[p+4] = new Variable("Memory Lower Boundary",(p+19)+"");
             int l = 0;
             while (myReader.hasNextLine()) {
                 String line = myReader.nextLine();
-                BigMemory[p + 9 + l] = line;
+                BigMemory[p + 10 + l] = line;
                 l++;
             }
             myReader.close();
             ReadyQueue.add(p);
-
+            System.out.println(Arrays.toString(BigMemory));
         } catch (FileNotFoundException e) {
             System.out.println("An error occurred.");
             e.printStackTrace();
@@ -87,14 +97,14 @@ public class OS {
     public static void writeInBigMemory(String x, String y){
         Variable var = new Variable(x,y);
 
-        for (int v = (PID+4); v < PID+9; v++){
+        for (int v = (PID+5); v < PID+10; v++){
 
             if (BigMemory[v] == null){
                 BigMemory[v] = var;
                 break;
             }
 
-            if (((Variable) BigMemory[v]).key ==var.key){
+            if (((Variable) BigMemory[v]).key.equals(var.key)){
                 ((Variable) BigMemory[v]).value = var.value;
                 break;
             }
@@ -105,8 +115,8 @@ public class OS {
 
     public static String readFromBigMemory(String x){
 
-        for (int v = (PID+4); v < PID+9; v++){
-            if (((Variable) BigMemory[v]).key ==x){
+        for (int v = (PID+5); v < PID+10 && BigMemory[v]!= null; v++){
+            if (((Variable) BigMemory[v]).key.equals(x)){
                 return ((Variable) BigMemory[v]).value;
             }
         }
@@ -115,12 +125,14 @@ public class OS {
 
 
 
+
+
     public static void writeFile(String x, String y){
         String z =readFromBigMemory(y);
         if(z!= null){
             y= z;
         }
-         z =readFromMemory(x);
+         z =readFromBigMemory(x);
         if(z!= null){
             x= z;
         }
@@ -155,7 +167,7 @@ public class OS {
 
     static void printVariable(String vname) {
         //Check if variable exists
-        System.out.print(readFromMemory(vname) + "");
+        System.out.println(readFromBigMemory(vname) + "");
     }
 
     static String userInput() {
@@ -220,7 +232,7 @@ public class OS {
             try {
                 int m = Integer.parseInt(a);
                 int n = Integer.parseInt(b);
-                writeInMemory(x, (m + n) + "");
+                writeInBigMemory(x, (m + n) + "");
             } catch (NumberFormatException e) {
                 System.out.println("Cannot add Strings");
             }
@@ -275,16 +287,22 @@ public class OS {
     }
     public static void schedule(){
         while(!ReadyQueue.isEmpty()){
-            int index = ReadyQueue.poll();
-            executeInstruction((String)BigMemory[(Integer.parseInt(((Variable)BigMemory[index+2]).value))]);
-            ((Variable)BigMemory[index+2]).value=(Integer.parseInt(((Variable)BigMemory[index+2]).value)+1)+"";
-            int second=(Integer.parseInt(((Variable)BigMemory[index+2]).value));
-            if(second> (Integer.parseInt(((Variable)BigMemory[index+3]).value)) || BigMemory[second]==null){
+            PID = ReadyQueue.poll();
+
+            System.out.println("Process " + ((Variable)BigMemory[PID]).value);
+            System.out.println(Arrays.toString(BigMemory));
+
+            BigMemory[PID+1] = new Variable("Process State","Running");
+            executeInstruction((String)BigMemory[(Integer.parseInt(((Variable)BigMemory[PID+2]).value))]);
+            ((Variable)BigMemory[PID+2]).value=(Integer.parseInt(((Variable)BigMemory[PID+2]).value)+1)+"";
+            int second=(Integer.parseInt(((Variable)BigMemory[PID+2]).value));
+            if(second> (Integer.parseInt(((Variable)BigMemory[PID+4]).value)) || BigMemory[second]==null){
                 continue;
             }
-            executeInstruction((String)BigMemory[(Integer.parseInt(((Variable)BigMemory[index+2]).value))]);
-            ((Variable)BigMemory[index+2]).value=(Integer.parseInt(((Variable)BigMemory[index+2]).value)+1)+"";
-            ReadyQueue.add(index);
+            executeInstruction((String)BigMemory[(Integer.parseInt(((Variable)BigMemory[PID+2]).value))]);
+            ((Variable)BigMemory[PID+2]).value=(Integer.parseInt(((Variable)BigMemory[PID+2]).value)+1)+"";
+            BigMemory[PID+1] = new Variable("Process State","Not Running");
+            ReadyQueue.add(PID);
 
 
         }
@@ -292,13 +310,13 @@ public class OS {
     }
 
     public static void main(String[] args) {
-     //Memory = new Hashtable<>();
+//     //Memory = new Hashtable<>();
         assignLocs("Program 1");
-        assignLocs("Program 2");
-        assignLocs("Program 3");
+//        assignLocs("Program 2");
+//        assignLocs("Program 3");
         schedule();
 
-    String programName = "Program 2";
+//    String programName = "Program 2";
    // executeProgram(programName);
     }
 }

@@ -3,8 +3,8 @@ import java.util.*;
 
 /* Memory:
  ---------------------------------------------------------------------------------------
-| P1                   |    P2                | P3                                     |
-| pcb1 variables1 loc3 | pcb2 variables2 loc3 | pcb3 variables3 loc3                   |
+| P1                   | P2                   | P3                                     |
+| pcb1 variables1 loc1 | pcb2 variables2 loc2 | pcb3 variables3 loc3                   |
 |  5       5       10
  ---------------------------------------------------------------------------------------
 
@@ -47,11 +47,13 @@ public class OS {
         }
     }
 
+
+
     static void assignLocs(String programName)
     {
 
         try {
-            System.out.println(programName);
+           // System.out.println(programName);
             File myObj = new File("Resources/"+ programName+".txt");
             Scanner myReader = new Scanner(myObj);
             int p =0;
@@ -61,26 +63,62 @@ public class OS {
                 }
                 p+=20;
             }
+
+
             //PCB
             BigMemory[p] = new Variable("Process ID",programName.split(" ")[1]);
             BigMemory[p+1] = new Variable("Process State","Not Running");
             BigMemory[p+2] = new Variable("Program Counter",(p+10)+"");
             BigMemory[p+3] = new Variable("Memory Upper Boundary",p+"");
             BigMemory[p+4] = new Variable("Memory Lower Boundary",(p+19)+"");
+
+            System.out.println("Writing PCB of Program " +programName.split(" ")[1] +" :" );
+            printPCB(p);
+            System.out.println();
+
+
+
             int l = 0;
+            System.out.println("Writing LOC of Program " + programName.split(" ")[1]+ " : ");
+            System.out.println("Index | Word");
+
+
             while (myReader.hasNextLine()) {
                 String line = myReader.nextLine();
                 BigMemory[p + 10 + l] = line;
+
+                System.out.print((p+10+l) + "    |" );
+                System.out.print(" "+line +"\n");
+
+
                 l++;
             }
+            System.out.println("");
+            System.out.println("--------------------------");
+            System.out.println();
+
+
+
+
             myReader.close();
             ReadyQueue.add(p);
-            System.out.println(Arrays.toString(BigMemory));
+        //    System.out.println(Arrays.toString(BigMemory));
         } catch (FileNotFoundException e) {
             System.out.println("An error occurred.");
             e.printStackTrace();
         }
     }
+
+    static void printPCB(int p){
+        System.out.println("Index | Word");
+        int j=0;
+        for (int i=p; i<p+5;i++, j++){
+            System.out.print(i + "    |" );
+            System.out.print(" "+BigMemory[i] +"\n");
+
+        }
+    }
+
 
     static Hashtable<String, String> Memory;
 
@@ -100,11 +138,13 @@ public class OS {
         for (int v = (PID+5); v < PID+10; v++){
 
             if (BigMemory[v] == null){
+                System.out.println("| Writing Word: " +  var +" At index: " + v);
                 BigMemory[v] = var;
                 break;
             }
 
             if (((Variable) BigMemory[v]).key.equals(var.key)){
+                System.out.println("| Writing Word: " + var +" At index: " + v);
                 ((Variable) BigMemory[v]).value = var.value;
                 break;
             }
@@ -115,8 +155,10 @@ public class OS {
 
     public static String readFromBigMemory(String x){
 
+
         for (int v = (PID+5); v < PID+10 && BigMemory[v]!= null; v++){
             if (((Variable) BigMemory[v]).key.equals(x)){
+                System.out.println("| Reading Word: " + ((Variable) BigMemory[v]).toString() +" From index: " + v);
                 return ((Variable) BigMemory[v]).value;
             }
         }
@@ -142,7 +184,8 @@ public class OS {
             myWriter.flush();
             myWriter.close();
         } catch (IOException e) {
-            System.out.println("File cant be created :(");
+            System.out.println("| File cant be created :(");
+            e.printStackTrace();
         }
     }
 
@@ -160,24 +203,24 @@ public class OS {
             }
             myReader.close();
         } catch (FileNotFoundException e) {
-            System.out.println("File "+x +" does not exist");
+            System.out.println("| File "+x +" does not exist");
         }
         return result.toString();
     }
 
     static void printVariable(String vname) {
         //Check if variable exists
-        System.out.println(readFromBigMemory(vname) + "");
+        System.out.println( "| " + readFromBigMemory(vname) + "");
     }
 
     static String userInput() {
         BufferedReader br =new BufferedReader(new InputStreamReader(System.in));
-        System.out.print("input: ");
+        System.out.print("| input: ");
         try {
             return br.readLine();
 
         } catch (IOException e) {
-            System.out.println("Error Taking the input");
+            System.out.println(" Error Taking the input");
         }
         return null;
     }
@@ -195,7 +238,7 @@ public class OS {
             myReader.close();
             return arr;
         } catch (FileNotFoundException e) {
-            System.out.println("An error occurred.");
+            System.out.println(" An error occurred.");
             e.printStackTrace();
             return null;
         }
@@ -226,6 +269,7 @@ public class OS {
     }
 
     public static void add(String x, String y) {
+        // meee System.out.println("Word being read: " + );
         String a = readFromBigMemory(x);
         String b = readFromBigMemory(y);
         if (a!=null && b!=null) {
@@ -234,7 +278,7 @@ public class OS {
                 int n = Integer.parseInt(b);
                 writeInBigMemory(x, (m + n) + "");
             } catch (NumberFormatException e) {
-                System.out.println("Cannot add Strings");
+                System.out.println("| Cannot add Strings");
             }
         }
     }
@@ -246,7 +290,7 @@ public class OS {
             if (line.contains("print")) {
                 String[] d = line.split(" ");
                 if (Character.isUpperCase(d[1].charAt(0)))
-                    System.out.println(d[1]);
+                    System.out.println(" "+d[1]);
                 else printVariable(d[1]);
             } else {//code for every thing other than input and print
                 String[] lineWords = line.split("\\s");
@@ -264,11 +308,13 @@ public class OS {
             }
         }
     }
-    public static void executeInstruction(String instruction){
+
+    public static void executeInstruction(String instruction) {
+
         if (instruction.contains("print")) {
             String[] d = instruction.split(" ");
             if (Character.isUpperCase(d[1].charAt(0)))
-                System.out.println(d[1]);
+                System.out.println("| "+d[1]);
             else printVariable(d[1]);
         } else {//code for every thing other than input and print
             String[] lineWords = instruction.split("\\s");
@@ -277,10 +323,10 @@ public class OS {
                     assign(lineWords[1], Arrays.copyOfRange(lineWords, 2, lineWords.length));
                     break;
                 case "add":
-                    add(lineWords[1],lineWords[2]);
+                    add(lineWords[1], lineWords[2]);
                     break;
                 case "writeFile":
-                    writeFile(lineWords[1],lineWords[2]);
+                    writeFile(lineWords[1], lineWords[2]);
                     break;
             }
         }
@@ -289,26 +335,42 @@ public class OS {
         while(!ReadyQueue.isEmpty()){
             PID = ReadyQueue.poll();
 
-            System.out.println("Process " + ((Variable)BigMemory[PID]).value);
-            System.out.println(Arrays.toString(BigMemory));
+            System.out.println("Running Process " + ((Variable)BigMemory[PID]).value);
+            // System.out.println(Arrays.toString(BigMemory));
 
             BigMemory[PID+1] = new Variable("Process State","Running");
             //execute(BigMemory[BigMemory[pc]]);
+
+            System.out.println("| Reading Instruction: '"+(String)BigMemory[(Integer.parseInt(((Variable)BigMemory[PID+2]).value))]+"'" + " From index: " + (Integer.parseInt(((Variable)BigMemory[PID+2]).value)));
             executeInstruction((String)BigMemory[(Integer.parseInt(((Variable)BigMemory[PID+2]).value))]);
+
+
             //pc=pc+1
             ((Variable)BigMemory[PID+2]).value=(Integer.parseInt(((Variable)BigMemory[PID+2]).value)+1)+"";
+
             int second=(Integer.parseInt(((Variable)BigMemory[PID+2]).value));
             //if(pc> upperBoundry || Mem[pc]=null)
             if(second> (Integer.parseInt(((Variable)BigMemory[PID+4]).value)) || BigMemory[second]==null){
+                System.out.println("Process "+((Variable)BigMemory[PID]).value  +" ENDED");
+                System.out.println();
                 continue;
             }
+            System.out.println();
+            System.out.println("| Reading Instruction: '"+(String)BigMemory[(Integer.parseInt(((Variable)BigMemory[PID+2]).value))]+"'" + " From index: " + (Integer.parseInt(((Variable)BigMemory[PID+2]).value)));
+
             executeInstruction((String)BigMemory[(Integer.parseInt(((Variable)BigMemory[PID+2]).value))]);
             ((Variable)BigMemory[PID+2]).value=(Integer.parseInt(((Variable)BigMemory[PID+2]).value)+1)+"";
             BigMemory[PID+1] = new Variable("Process State","Not Running");
             int next=(Integer.parseInt(((Variable)BigMemory[PID+2]).value));
-            if(!(next> (Integer.parseInt(((Variable)BigMemory[PID+4]).value)) || BigMemory[next]==null))
-            ReadyQueue.add(PID);
+            if(!(next> (Integer.parseInt(((Variable)BigMemory[PID+4]).value)) || BigMemory[next]==null)) ReadyQueue.add(PID);
+            else {
+                System.out.println("Process "+((Variable)BigMemory[PID]).value  +" ENDED");
 
+            }
+
+
+            System.out.println("");
+            System.out.println("");
 
         }
 
@@ -316,7 +378,7 @@ public class OS {
 
     public static void main(String[] args) {
 //     //Memory = new Hashtable<>();
-        assignLocs("Program 1");
+//        assignLocs("Program 1");
         assignLocs("Program 2");
         assignLocs("Program 3");
         schedule();

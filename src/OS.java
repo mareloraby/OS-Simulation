@@ -25,8 +25,9 @@ PCB:
 * */
 
 
+@SuppressWarnings({"SuspiciousNameCombination", "RedundantCast"})
 public class OS {
-    static int I= 1;
+
     static Object [] BigMemory = new Object [2000];
     static int PID = 0;
     static Queue<Integer> ReadyQueue = new LinkedList<>();
@@ -51,6 +52,7 @@ public class OS {
 
 
 
+    @SuppressWarnings("SameParameterValue")
     static void assignLocs(String programName)
     {
 
@@ -96,7 +98,7 @@ public class OS {
 
                 l++;
             }
-            System.out.println("");
+            System.out.println();
             System.out.println("--------------------------");
             System.out.println();
 
@@ -128,6 +130,7 @@ public class OS {
     //System Calls:
     // M1
     static Hashtable<String, String> Memory;
+
     public static String readFromMemory(String x){
         return Memory.get(x);
     }
@@ -347,9 +350,9 @@ public class OS {
             // System.out.println(Arrays.toString(BigMemory));
 
             BigMemory[PID+1] = new Variable("Process State","Running");
-            //execute(BigMemory[BigMemory[pc]]);
 
-            System.out.println("| Reading Instruction: '"+(String)BigMemory[(Integer.parseInt(((Variable)BigMemory[PID+2]).value))]+"'" + " From index: " + (Integer.parseInt(((Variable)BigMemory[PID+2]).value)));
+            //execute(BigMemory[BigMemory[pc]])
+            System.out.println("| Reading Instruction: '"+BigMemory[(Integer.parseInt(((Variable)BigMemory[PID+2]).value))]+"'" + " From index: " + (Integer.parseInt(((Variable)BigMemory[PID+2]).value)));
             executeInstruction((String)BigMemory[(Integer.parseInt(((Variable)BigMemory[PID+2]).value))]);
 
 
@@ -364,7 +367,7 @@ public class OS {
                 continue;
             }
             System.out.println();
-            System.out.println("| Reading Instruction: '"+(String)BigMemory[(Integer.parseInt(((Variable)BigMemory[PID+2]).value))]+"'" + " From index: " + (Integer.parseInt(((Variable)BigMemory[PID+2]).value)));
+            System.out.println("| Reading Instruction: '"+BigMemory[(Integer.parseInt(((Variable)BigMemory[PID+2]).value))]+"'" + " From index: " + (Integer.parseInt(((Variable)BigMemory[PID+2]).value)));
 
             executeInstruction((String)BigMemory[(Integer.parseInt(((Variable)BigMemory[PID+2]).value))]);
             ((Variable)BigMemory[PID+2]).value=(Integer.parseInt(((Variable)BigMemory[PID+2]).value)+1)+"";
@@ -378,8 +381,8 @@ public class OS {
             }
 
 
-            System.out.println("");
-            System.out.println("");
+            System.out.println();
+            System.out.println();
 
         }
 

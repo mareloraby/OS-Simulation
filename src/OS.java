@@ -293,15 +293,20 @@ public class OS {
             System.out.println(Arrays.toString(BigMemory));
 
             BigMemory[PID+1] = new Variable("Process State","Running");
+            //execute(BigMemory[BigMemory[pc]]);
             executeInstruction((String)BigMemory[(Integer.parseInt(((Variable)BigMemory[PID+2]).value))]);
+            //pc=pc+1
             ((Variable)BigMemory[PID+2]).value=(Integer.parseInt(((Variable)BigMemory[PID+2]).value)+1)+"";
             int second=(Integer.parseInt(((Variable)BigMemory[PID+2]).value));
+            //if(pc> upperBoundry || Mem[pc]=null)
             if(second> (Integer.parseInt(((Variable)BigMemory[PID+4]).value)) || BigMemory[second]==null){
                 continue;
             }
             executeInstruction((String)BigMemory[(Integer.parseInt(((Variable)BigMemory[PID+2]).value))]);
             ((Variable)BigMemory[PID+2]).value=(Integer.parseInt(((Variable)BigMemory[PID+2]).value)+1)+"";
             BigMemory[PID+1] = new Variable("Process State","Not Running");
+            int next=(Integer.parseInt(((Variable)BigMemory[PID+2]).value));
+            if(!(next> (Integer.parseInt(((Variable)BigMemory[PID+4]).value)) || BigMemory[next]==null))
             ReadyQueue.add(PID);
 
 
@@ -312,8 +317,8 @@ public class OS {
     public static void main(String[] args) {
 //     //Memory = new Hashtable<>();
         assignLocs("Program 1");
-//        assignLocs("Program 2");
-//        assignLocs("Program 3");
+        assignLocs("Program 2");
+        assignLocs("Program 3");
         schedule();
 
 //    String programName = "Program 2";

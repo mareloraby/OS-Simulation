@@ -392,8 +392,8 @@ public class OS {
     public static void main(String[] args) {
 //      Memory = new Hashtable<>();
         assignLocs("Program 1");
-//        assignLocs("Program 2");
-//        assignLocs("Program 3");
+        assignLocs("Program 2");
+        assignLocs("Program 3");
         schedule();
 
 //    M1

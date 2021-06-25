@@ -364,6 +364,8 @@ public class OS {
                 System.out.println("Process "+((Variable)BigMemory[PID]).value  +" ENDED.");
                 System.out.println("quanta: " +  quantas.get(Integer.valueOf(((Variable)BigMemory[PID]).value)).toString()  );
                 System.out.println();
+                System.out.println();
+
                 continue;
             }
             System.out.println();
@@ -395,13 +397,14 @@ public class OS {
     }
 
     public static void main(String[] args) {
-//      Memory = new Hashtable<>();
-//        assignLocs("Program 1");
+
+        assignLocs("Program 1");
         assignLocs("Program 2");
         assignLocs("Program 3");
         schedule();
 
 //    M1
+//    Memory = new Hashtable<>();
 //    String programName = "Program 2";
 //    executeProgram(programName);
 

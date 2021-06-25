@@ -1,13 +1,16 @@
 Team No: 19 
 
-Name:Maryam Ayman ElORaby
-Task:Code parser/interpreter, the print and input instructions
+Name: Maryam Ayman ElOraby
+M1 Task: Code parser/interpreter, the print and input instructions
+M2 Task: The memory allocation and assignment.
 ____________________________
 Name: Ahmed Ayman ElOraby
-Task:The assign instruction with all its sub cases.
+M1 Task: The assign instruction with all its sub cases.
+M2 Task: The memory word definition and PCB.
 ____________________________
 Name: Ahmed Amr Abdalsalam
-Task:The add, read file and write file instructions.
+M1 Task: The add, read file and write file instructions.
+M2 Task: The Scheduler
 ____________________________
 Note:
 * To parse a program, please insert the "program x.txt" in the "Resources" directory

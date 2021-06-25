@@ -31,7 +31,7 @@ public class OS {
     static Object [] BigMemory = new Object [2000];
     static int PID = 0;
     static Queue<Integer> ReadyQueue = new LinkedList<>();
-    static HashMap<Integer,Integer> quantas=new HashMap<>();
+    static HashMap<Integer,ArrayList<Integer>> quantas=new HashMap<>();
 
     static class Variable{
         String key;
@@ -57,7 +57,7 @@ public class OS {
     {
 
         try {
-           // System.out.println(programName);
+
             File myObj = new File("Resources/"+ programName+".txt");
             Scanner myReader = new Scanner(myObj);
             int p =0;
@@ -70,7 +70,9 @@ public class OS {
 
 
             //PCB
-            quantas.put(Integer.parseInt(programName.split(" ")[1]),0);
+
+            quantas.put(Integer.parseInt(programName.split(" ")[1]),new ArrayList<Integer>());
+
             BigMemory[p] = new Variable("Process ID",programName.split(" ")[1]);
             BigMemory[p+1] = new Variable("Process State","Not Running");
             BigMemory[p+2] = new Variable("Program Counter",(p+10)+"");
@@ -107,7 +109,6 @@ public class OS {
 
             myReader.close();
             ReadyQueue.add(p);
-        //    System.out.println(Arrays.toString(BigMemory));
         } catch (FileNotFoundException e) {
             System.out.println("An error occurred.");
             e.printStackTrace();
@@ -123,8 +124,6 @@ public class OS {
 
         }
     }
-
-
 
 
     //System Calls:
@@ -239,7 +238,7 @@ public class OS {
             while (myReader.hasNextLine()) {
                 String line = myReader.nextLine();
                 arr.add(line);
-                //System.out.println(line);
+
             }
             myReader.close();
             return arr;
@@ -343,19 +342,13 @@ public class OS {
             PID = ReadyQueue.poll();
 
 
-            int quanta = quantas.get(Integer.valueOf(((Variable)BigMemory[PID]).value)) ;
-
-            quantas.replace(Integer.valueOf(((Variable)BigMemory[PID]).value), quanta,quanta+1 );
-
             System.out.println("Running Process " + ((Variable)BigMemory[PID]).value);
-            // System.out.println(Arrays.toString(BigMemory));
-
             BigMemory[PID+1] = new Variable("Process State","Running");
 
             //execute(BigMemory[BigMemory[pc]])
             System.out.println("| Reading Instruction: '"+BigMemory[(Integer.parseInt(((Variable)BigMemory[PID+2]).value))]+"'" + " From index: " + (Integer.parseInt(((Variable)BigMemory[PID+2]).value)));
             executeInstruction((String)BigMemory[(Integer.parseInt(((Variable)BigMemory[PID+2]).value))]);
-
+            int q = 1;
 
             //pc=pc+1
             ((Variable)BigMemory[PID+2]).value=(Integer.parseInt(((Variable)BigMemory[PID+2]).value)+1)+"";
@@ -363,22 +356,34 @@ public class OS {
             int second=(Integer.parseInt(((Variable)BigMemory[PID+2]).value));
             //if(pc> upperBoundry || Mem[pc]=null)
             if(second> (Integer.parseInt(((Variable)BigMemory[PID+4]).value)) || BigMemory[second]==null){
-                System.out.println("Process "+((Variable)BigMemory[PID]).value  +" ENDED. It ran for " + quantas.get(Integer.valueOf(((Variable)BigMemory[PID]).value))  + " quantas");
+
+                ArrayList<Integer> arr = quantas.get(Integer.valueOf(((Variable)BigMemory[PID]).value)) ;
+                arr.add(q);
+                quantas.replace( Integer.valueOf(((Variable)BigMemory[PID]).value), arr);
+
+                System.out.println("Process "+((Variable)BigMemory[PID]).value  +" ENDED.");
+                System.out.println("quanta: " +  quantas.get(Integer.valueOf(((Variable)BigMemory[PID]).value)).toString()  );
                 System.out.println();
                 continue;
             }
             System.out.println();
             System.out.println("| Reading Instruction: '"+BigMemory[(Integer.parseInt(((Variable)BigMemory[PID+2]).value))]+"'" + " From index: " + (Integer.parseInt(((Variable)BigMemory[PID+2]).value)));
-
             executeInstruction((String)BigMemory[(Integer.parseInt(((Variable)BigMemory[PID+2]).value))]);
+            q++;
+            ArrayList<Integer> a = quantas.get(Integer.valueOf(((Variable)BigMemory[PID]).value)) ;
+            a.add(q);
+            quantas.replace( Integer.valueOf(((Variable)BigMemory[PID]).value), a);
+
             ((Variable)BigMemory[PID+2]).value=(Integer.parseInt(((Variable)BigMemory[PID+2]).value)+1)+"";
             BigMemory[PID+1] = new Variable("Process State","Not Running");
+
             int next=(Integer.parseInt(((Variable)BigMemory[PID+2]).value));
-            if(!(next> (Integer.parseInt(((Variable)BigMemory[PID+4]).value)) || BigMemory[next]==null)) ReadyQueue.add(PID);
+            if(!(next> (Integer.parseInt(((Variable)BigMemory[PID+4]).value)) || BigMemory[next]==null))
+                ReadyQueue.add(PID);
             else {
-                System.out.println("Process "+((Variable)BigMemory[PID]).value  +" ENDED. It ran for " + quantas.get(Integer.valueOf(((Variable)BigMemory[PID]).value))  + " quantas");
 
-
+                System.out.println("Process "+((Variable)BigMemory[PID]).value  +" ENDED.");
+                System.out.println("quanta: " +  quantas.get(Integer.valueOf(((Variable)BigMemory[PID]).value)).toString()  );
             }
 
 
@@ -391,7 +396,7 @@ public class OS {
 
     public static void main(String[] args) {
 //      Memory = new Hashtable<>();
-        assignLocs("Program 1");
+//        assignLocs("Program 1");
         assignLocs("Program 2");
         assignLocs("Program 3");
         schedule();
